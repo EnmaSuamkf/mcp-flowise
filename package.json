@@ -1,0 +1,29 @@
+{
+  "name": "@suamkf08/mcp-flowise",
+  "version": "0.1.2",
+  "description": "MCP server that exposes your local Flowise chatflows as tools for Claude, Cursor, and any MCP client",
+  "main": "index.js",
+  "bin": {
+    "mcp-flowise": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mcp",
+    "flowise",
+    "llm",
+    "ai",
+    "model-context-protocol"
+  ],
+  "author": "suamkf08",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "index.js",
+    "smithery.yaml",
+    "README.md"
+  ]
+}

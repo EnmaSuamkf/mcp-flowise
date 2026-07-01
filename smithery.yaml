@@ -1,0 +1,39 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      flowiseApiEndpoint:
+        type: string
+        description: "Base URL of your Flowise instance (e.g. http://localhost:3000)"
+        default: "http://localhost:3000"
+      flowiseApiKey:
+        type: string
+        description: "Flowise API key (leave empty if auth is disabled)"
+        default: ""
+      flowiseDynamic:
+        type: boolean
+        description: "Register one tool per chatflow at startup instead of generic tools"
+        default: false
+      flowiseWhitelistId:
+        type: string
+        description: "Comma-separated chatflow IDs to include (empty = all)"
+        default: ""
+      flowiseBlacklistId:
+        type: string
+        description: "Comma-separated chatflow IDs to exclude"
+        default: ""
+    required:
+      - flowiseApiEndpoint
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@suamkf08/mcp-flowise"],
+      env: {
+        FLOWISE_API_ENDPOINT: config.flowiseApiEndpoint,
+        FLOWISE_API_KEY: config.flowiseApiKey || "",
+        FLOWISE_DYNAMIC: config.flowiseDynamic ? "true" : "false",
+        FLOWISE_WHITELIST_ID: config.flowiseWhitelistId || "",
+        FLOWISE_BLACKLIST_ID: config.flowiseBlacklistId || "",
+      }
+    })
