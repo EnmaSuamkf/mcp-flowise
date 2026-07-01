@@ -1,10 +1,11 @@
 {
   "name": "@suamkf08/mcp-flowise",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP server that exposes your local Flowise chatflows as tools for Claude, Cursor, and any MCP client",
   "main": "index.js",
   "bin": {
-    "mcp-flowise": "index.js"
+    "mcp-flowise": "index.js",
+    "mcp-flowise-install": "install.js"
   },
   "scripts": {
     "start": "node index.js"
@@ -23,6 +24,7 @@
   },
   "files": [
     "index.js",
+    "install.js",
     "smithery.yaml",
     "README.md"
   ]

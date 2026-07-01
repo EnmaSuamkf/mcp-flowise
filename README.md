@@ -23,7 +23,23 @@ MCP server that exposes the **chatflows of your local Flowise** as tools for Cla
 
 ## Installation
 
-### Claude Desktop
+### One-command install (any client)
+
+```bash
+npx -y @suamkf08/mcp-flowise-install --client claude
+npx -y @suamkf08/mcp-flowise-install --client cursor
+npx -y @suamkf08/mcp-flowise-install --client free-code
+npx -y @suamkf08/mcp-flowise-install --client vscode
+npx -y @suamkf08/mcp-flowise-install --client windsurf
+```
+
+The script asks for your `FLOWISE_API_ENDPOINT` and `FLOWISE_API_KEY`, writes the config automatically, and tells you where it was saved. Restart your client after running it.
+
+---
+
+### Manual install
+
+#### Claude Desktop
 
 Add this to your `claude_desktop_config.json`
 (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS,
