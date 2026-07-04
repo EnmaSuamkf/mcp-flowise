@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>mcp-flowise — installation and usage</title>
+    <style>
+      :root{
+        --bg: #0e1416;
+        --surface: #141c1f;
+        --surface-2: #182124;
+        --border: #253034;
+        --text: #e6edee;
+        --muted: #8ea1a6;
+        --faint: #5d7378;
+        --accent: #5ed6a4;
+        --accent-dim: #2f6b54;
+        --warn: #e7b563;
+        --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      *{ box-sizing: border-box; }
+      html{ scroll-behavior: smooth; }
+      body{
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.6;
+      }
+      a{ color: var(--accent); }
+      a:focus-visible, button:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
+      code, kbd{
+        font-family: var(--mono);
+        font-size: 0.88em;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        padding: 0.05em 0.4em;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+      pre{
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        line-height: 1.6;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem 1.15rem;
+        overflow-x: auto;
+        margin: 0 0 1rem;
+      }
+      pre code{ background: none; border: none; padding: 0; white-space: pre; }
+
+      .shell{ max-width: 860px; margin: 0 auto; padding: 3.2rem 1.5rem 5rem; }
+
+      header.hero{ margin-bottom: 2.6rem; }
+      .eyebrow{
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.6em;
+        margin-bottom: 0.6rem;
+      }
+      .eyebrow::before{
+        content: "";
+        width: 6px; height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px var(--accent-dim);
+      }
+      h1{
+        font-family: var(--mono);
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+        margin: 0 0 0.6rem;
+      }
+      .tagline{ color: var(--muted); font-size: 1.02rem; max-width: 62ch; margin: 0; }
+
+      .badges{ margin-top: 1rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+      .badges img{ display: block; height: 20px; }
+
+      nav.toc{
+        margin-top: 1.6rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.3rem;
+        font-family: var(--mono);
+        font-size: 0.8rem;
+      }
+      nav.toc a{ color: var(--muted); text-decoration: none; }
+      nav.toc a:hover{ color: var(--accent); }
+
+      section{ margin-top: 2.8rem; scroll-margin-top: 1.5rem; }
+      h2{
+        font-family: var(--mono);
+        font-size: 0.95rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+        margin: 0 0 1.1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--border);
+      }
+      h3{ font-size: 1.02rem; font-weight: 600; margin: 1.4rem 0 0.6rem; }
+      p{ margin: 0 0 0.9rem; }
+      ol, ul{ margin: 0 0 1rem; padding-left: 1.3rem; }
+      li{ margin-bottom: 0.35rem; }
+
+      .callout{
+        display: flex;
+        gap: 0.85rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 1rem 1.2rem;
+        margin: 0 0 1.1rem;
+      }
+      .callout.warn{ border-left-color: var(--warn); }
+      .callout .tag{
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: var(--accent);
+      }
+      .callout.warn .tag{ color: var(--warn); }
+      .callout p{ margin: 0; font-size: 0.92rem; }
+      .callout p + p{ margin-top: 0.5rem; }
+
+      .table-wrap{ overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.1rem; }
+      table{ width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+      th, td{ text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+      tr:last-child td{ border-bottom: none; }
+      th{
+        color: var(--faint);
+        font-weight: 500;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--surface);
+      }
+      td code{ white-space: nowrap; }
+
+      .diagram{
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        line-height: 1.6;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        overflow-x: auto;
+        margin-bottom: 1.1rem;
+        white-space: pre;
+      }
+      .diagram .hl{ color: var(--accent); }
+
+      .tabs{ display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+      .tabs span{
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--faint);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        padding: 0.25rem 0.55rem;
+      }
+
+      footer{
+        margin-top: 3.5rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 0.76rem;
+        color: var(--faint);
+      }
+      footer a{ color: var(--faint); }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="eyebrow">mcp-flowise · docs</div>
+        <h1>Installation and usage</h1>
+        <p class="tagline">
+          An MCP server that exposes the chatflows of your local (or remote) Flowise instance as
+          tools for Claude, Cursor, free-code, VS Code, Windsurf, or any MCP client — either as two
+          generic tools or as one dedicated tool per chatflow.
+        </p>
+        <div class="badges">
+          <img src="https://img.shields.io/pypi/v/mcp-flowise" alt="PyPI version" />
+          <img src="https://img.shields.io/npm/v/@suamkf08/mcp-flowise" alt="npm version" />
+        </div>
+        <nav class="toc" aria-label="Contents">
+          <a href="#requirements">Requirements</a>
+          <a href="#tools">Tools</a>
+          <a href="#installation">Installation</a>
+          <a href="#configuration">Configuration</a>
+          <a href="#dynamic-mode">Dynamic mode</a>
+          <a href="#filtering-chatflows">Filtering chatflows</a>
+          <a href="#error-handling">Error handling</a>
+          <a href="#development">Development</a>
+          <a href="#flowise-api-reference">Flowise API reference</a>
+          <a href="#security">Security</a>
+        </nav>
+      </header>
+
+      <section id="requirements">
+        <h2>Requirements</h2>
+        <ul>
+          <li>A running <a href="https://flowiseai.com/" target="_blank" rel="noopener">Flowise</a> instance, reachable from wherever this server runs (default <code>http://localhost:3000</code>).</li>
+          <li><strong>Node.js 18+</strong> (to run via <code>npx</code>) <strong>or</strong> <strong>Python 3.10+ with <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv</a></strong> (to run via <code>uvx</code>). You only need one of the two.</li>
+        </ul>
+      </section>
+
+      <section id="tools">
+        <h2>Tools</h2>
+        <p>The server exposes tools in one of two modes, chosen with <code>FLOWISE_DYNAMIC</code>:</p>
+
+        <h3>Simple mode (default)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>list_chatflows()</code></td><td>Returns a JSON array of <code>{"id", "name"}</code> for every chatflow that passes the configured whitelist/blacklist filters.</td></tr>
+              <tr><td><code>create_prediction(chatflow_id, question)</code></td><td>Runs the given chatflow with <code>question</code> and returns its response (the raw Flowise JSON, re-serialized as a string).</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>This mode fits any client out of the box: the model discovers chatflows with <code>list_chatflows</code> and calls <code>create_prediction</code> with whichever <code>id</code> it needs, without you touching the config again when chatflows change.</p>
+
+        <h3>Dynamic mode (<code>FLOWISE_DYNAMIC=true</code>)</h3>
+        <p>
+          At startup, the server calls Flowise once, and registers <strong>one tool per chatflow</strong>
+          instead of the two generic ones — e.g. a chatflow named "Support Bot" becomes a tool
+          <code>flowise_support_bot(question)</code>. See <a href="#dynamic-mode">Dynamic mode</a> below for naming rules.
+        </p>
+      </section>
+
+      <section id="installation">
+        <h2>Installation</h2>
+
+        <h3>One-command install (any client)</h3>
+        <pre><code>npx -y @suamkf08/mcp-flowise-install --client claude
+npx -y @suamkf08/mcp-flowise-install --client cursor
+npx -y @suamkf08/mcp-flowise-install --client free-code
+npx -y @suamkf08/mcp-flowise-install --client vscode
+npx -y @suamkf08/mcp-flowise-install --client windsurf</code></pre>
+        <p>
+          The script prompts for <code>FLOWISE_API_ENDPOINT</code> (defaults to
+          <code>http://localhost:3000</code> if you just press enter) and <code>FLOWISE_API_KEY</code>
+          (leave empty if Flowise auth is disabled), then writes the <code>mcp-flowise</code> entry
+          into that client's config file and prints the path it wrote to. If an entry already
+          exists it asks before overwriting. Restart the client afterwards to pick up the change.
+        </p>
+        <div class="callout">
+          <span class="tag">only two vars</span>
+          <p>
+            The installer only asks for endpoint and API key. If you want
+            <code>FLOWISE_DYNAMIC</code> or the whitelist/blacklist filters (see
+            <a href="#configuration">Configuration</a>), add them to the generated config's
+            <code>env</code> block by hand, or use the manual install below.
+          </p>
+        </div>
+
+        <h3>Manual install</h3>
+        <p>Every client config follows the same shape — a <code>command</code>/<code>args</code>/<code>env</code> block — only the file path and surrounding structure differ.</p>
+
+        <h4>Claude Desktop</h4>
+        <p>
+          Edit <code>claude_desktop_config.json</code>
+          (<code>~/Library/Application Support/Claude/claude_desktop_config.json</code> on macOS,
+          <code>%APPDATA%\Claude\claude_desktop_config.json</code> on Windows,
+          <code>~/.config/Claude/claude_desktop_config.json</code> on Linux):
+        </p>
+        <div class="tabs"><span>option A — npx (Node.js)</span></div>
+        <pre><code>{
+  "mcpServers": {
+    "mcp-flowise": {
+      "command": "npx",
+      "args": ["-y", "@suamkf08/mcp-flowise"],
+      "env": {
+        "FLOWISE_API_ENDPOINT": "http://localhost:3000",
+        "FLOWISE_API_KEY": ""
+      }
+    }
+  }
+}</code></pre>
+        <div class="tabs"><span>option B — uvx (uv)</span></div>
+        <p>Install uv first if you don't have it:</p>
+        <pre><code># macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        <pre><code>{
+  "mcpServers": {
+    "mcp-flowise": {
+      "command": "uvx",
+      "args": ["mcp-flowise"],
+      "env": {
+        "FLOWISE_API_ENDPOINT": "http://localhost:3000",
+        "FLOWISE_API_KEY": ""
+      }
+    }
+  }
+}</code></pre>
+
+        <h4>Cursor</h4>
+        <p>Add to <code>.cursor/mcp.json</code> in your project, or <code>~/.cursor/mcp.json</code> globally:</p>
+        <pre><code>{
+  "mcpServers": {
+    "mcp-flowise": {
+      "command": "npx",
+      "args": ["-y", "@suamkf08/mcp-flowise"],
+      "env": {
+        "FLOWISE_API_ENDPOINT": "http://localhost:3000",
+        "FLOWISE_API_KEY": ""
+      }
+    }
+  }
+}</code></pre>
+
+        <h4>free-code</h4>
+        <p>Add to <code>~/.free-code/agent/mcp.json</code> (or import with <code>/mcp-import</code>):</p>
+        <pre><code>{
+  "mcpServers": {
+    "mcp-flowise": {
+      "command": "npx",
+      "args": ["-y", "@suamkf08/mcp-flowise"],
+      "env": {
+        "FLOWISE_API_ENDPOINT": "http://localhost:3000",
+        "FLOWISE_API_KEY": ""
+      }
+    }
+  }
+}</code></pre>
+        <p>Then enable it:</p>
+        <pre><code>/mcp enable mcp-flowise
+/reload</code></pre>
+
+        <h4>VS Code / Windsurf</h4>
+        <p>Same <code>command</code>/<code>args</code>/<code>env</code> block as above, written into that client's own MCP config file — the one-command installer (<a href="#installation">above</a>) already knows both paths per OS, so it's usually simpler to run it with <code>--client vscode</code> or <code>--client windsurf</code> than to find the file by hand.</p>
+      </section>
+
+      <section id="configuration">
+        <h2>Configuration</h2>
+        <p>All configuration is via environment variables passed in the <code>env</code> block of the MCP config:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Environment variable</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>FLOWISE_API_ENDPOINT</code></td><td><code>http://localhost:3000</code></td><td>Base URL of your Flowise instance. Trailing slash is stripped automatically.</td></tr>
+              <tr><td><code>FLOWISE_API_KEY</code></td><td><em>(empty)</em></td><td>Bearer token (Flowise → Settings → API Keys). Sent as <code>Authorization: Bearer &lt;key&gt;</code> only when non-empty.</td></tr>
+              <tr><td><code>FLOWISE_DYNAMIC</code></td><td><code>false</code></td><td>Set to <code>true</code> (also accepts <code>1</code>/<code>yes</code>) to register one tool per chatflow instead of the two generic tools.</td></tr>
+              <tr><td><code>FLOWISE_WHITELIST_ID</code></td><td><em>(empty)</em></td><td>Comma-separated chatflow IDs to include. If set, any chatflow whose id isn't in this list is dropped.</td></tr>
+              <tr><td><code>FLOWISE_BLACKLIST_ID</code></td><td><em>(empty)</em></td><td>Comma-separated chatflow IDs to exclude, checked after the whitelist.</td></tr>
+              <tr><td><code>FLOWISE_WHITELIST_NAME_REGEX</code></td><td><em>(empty)</em></td><td>Only include chatflows whose <code>name</code> matches this regex (<code>re.search</code>, not full match).</td></tr>
+              <tr><td><code>FLOWISE_BLACKLIST_NAME_REGEX</code></td><td><em>(empty)</em></td><td>Exclude chatflows whose <code>name</code> matches this regex, checked last.</td></tr>
+              <tr><td><code>LOG_LEVEL</code></td><td><code>INFO</code></td><td>Python logging level for the server's own stderr logs.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          These filters apply the same way in both simple mode (they shape what
+          <code>list_chatflows()</code> returns) and dynamic mode (they shape what gets registered
+          at startup) — see <a href="#filtering-chatflows">Filtering chatflows</a> for the exact
+          order they're applied in.
+        </p>
+      </section>
+
+      <section id="dynamic-mode">
+        <h2>Dynamic mode</h2>
+        <p>
+          With <code>FLOWISE_DYNAMIC=true</code>, the server fetches the chatflow list once at
+          startup and registers a tool per chatflow instead of the two generic ones. Each tool
+          takes a single <code>question</code> argument and internally calls the same prediction
+          endpoint as <code>create_prediction</code>.
+        </p>
+        <h3>Tool naming</h3>
+        <p>The chatflow's <code>name</code> is turned into a tool name by:</p>
+        <ol>
+          <li>Replacing every run of non-alphanumeric characters with <code>_</code>.</li>
+          <li>Trimming leading/trailing underscores and lowercasing.</li>
+          <li>Prefixing with <code>flowise_</code> (falling back to <code>flowise_chatflow</code> if the result is empty).</li>
+        </ol>
+        <p>So <code>"Support Bot"</code> → <code>flowise_support_bot</code>, and <code>"Lead-Scoring v2"</code> → <code>flowise_lead_scoring_v2</code>.</p>
+        <div class="callout">
+          <span class="tag">name collisions</span>
+          <p>
+            If two chatflows normalize to the same tool name, the second (and any further
+            duplicate) gets the first 6 characters of its chatflow id appended, e.g.
+            <code>flowise_support_bot_a1b2c3</code>, so both remain callable.
+          </p>
+        </div>
+        <div class="callout warn">
+          <span class="tag">startup snapshot</span>
+          <p>
+            The chatflow list is fetched only once, when the server process starts. Chatflows
+            added, renamed, or removed in Flowise afterwards won't appear (or disappear) as tools
+            until the MCP client restarts this server. If you add/rename chatflows often, simple
+            mode's <code>list_chatflows()</code> is more convenient since it re-queries Flowise on
+            every call.
+          </p>
+        </div>
+        <p>If fetching chatflows fails at startup (Flowise unreachable, auth error, etc.), the error is logged to stderr and dynamic registration is skipped — the server still starts, just with no chatflow tools registered.</p>
+      </section>
+
+      <section id="filtering-chatflows">
+        <h2>Filtering chatflows</h2>
+        <p>Whitelist/blacklist filters are combined and applied in this fixed order, per chatflow:</p>
+        <div class="diagram"><span class="hl">1.</span> FLOWISE_WHITELIST_ID set and chatflow id NOT in it   → drop
+<span class="hl">2.</span> chatflow id IN FLOWISE_BLACKLIST_ID                → drop
+<span class="hl">3.</span> FLOWISE_WHITELIST_NAME_REGEX set and name doesn't match → drop
+<span class="hl">4.</span> name matches FLOWISE_BLACKLIST_NAME_REGEX           → drop
+   otherwise                                          → keep</div>
+        <p>
+          A chatflow only survives if it passes all four checks. Regexes use Python's
+          <code>re.search</code>, so they match anywhere in the name, not just the whole string —
+          <code>FLOWISE_WHITELIST_NAME_REGEX=support</code> matches both <code>"Support Bot"</code>
+          and <code>"Customer Support v3"</code>.
+        </p>
+      </section>
+
+      <section id="error-handling">
+        <h2>Error handling</h2>
+        <p>
+          Both tools catch <code>httpx.HTTPError</code> (connection failures, timeouts, non-2xx
+          responses) and return a plain-text error message instead of raising — so a Flowise
+          instance being down or a bad <code>chatflow_id</code> surfaces to the model as readable
+          text, not a protocol-level failure:
+        </p>
+        <pre><code>Error contacting Flowise at http://localhost:3000: ...
+Error calling chatflow &lt;id&gt;: ...</code></pre>
+        <p>Every HTTP request (list or predict) uses a 120-second timeout.</p>
+      </section>
+
+      <section id="development">
+        <h2>Development</h2>
+        <pre><code>git clone https://github.com/suamkf08/mcp-flowise
+cd mcp-flowise
+uv run mcp-flowise        # starts over stdio; Ctrl+C to quit</code></pre>
+        <p>Inspect it interactively with MCP Inspector:</p>
+        <pre><code>uv run mcp dev mcp_flowise/server.py</code></pre>
+        <div class="callout">
+          <span class="tag">smithery</span>
+          <p>
+            <code>smithery.yaml</code> at the repo root declares a stdio <code>startCommand</code>
+            for deploying through <a href="https://smithery.ai/" target="_blank" rel="noopener">Smithery</a>,
+            with a config schema covering <code>flowiseApiEndpoint</code> (required),
+            <code>flowiseApiKey</code>, <code>flowiseDynamic</code>, <code>flowiseWhitelistId</code>,
+            and <code>flowiseBlacklistId</code>. The name-regex filters aren't exposed in that
+            schema — set them as plain environment variables if you need them there.
+          </p>
+        </div>
+      </section>
+
+      <section id="flowise-api-reference">
+        <h2>Flowise API reference</h2>
+        <p>What this server actually calls on your Flowise instance:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Purpose</th><th>Request</th></tr></thead>
+            <tbody>
+              <tr><td>List chatflows</td><td><code>GET {endpoint}/api/v1/chatflows</code></td></tr>
+              <tr><td>Run a chatflow</td><td><code>POST {endpoint}/api/v1/prediction/{chatflowId}</code> with body <code>{"question": "..."}</code></td></tr>
+              <tr><td>Auth</td><td><code>Authorization: Bearer &lt;FLOWISE_API_KEY&gt;</code>, omitted entirely if the key is empty</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="security">
+        <h2>Security</h2>
+        <ul>
+          <li>This server talks stdio to its MCP client only — it doesn't open any network port itself. All network traffic is outbound, from this process to your Flowise <code>FLOWISE_API_ENDPOINT</code>.</li>
+          <li><code>FLOWISE_API_KEY</code> is stored in plain text in whichever client config file you write it to (<code>claude_desktop_config.json</code>, <code>mcp.json</code>, etc.) — treat that file with the same care as any other credential file.</li>
+          <li>If <code>FLOWISE_API_ENDPOINT</code> points at a non-localhost Flowise instance, prefer <code>https://</code> so the API key isn't sent in the clear over the network.</li>
+          <li>Whitelist/blacklist filters only affect what's exposed as MCP tools to the client — they are not an authentication or authorization boundary against Flowise itself. Anyone with the same <code>FLOWISE_API_KEY</code> can call any chatflow directly against the Flowise API, filters or not.</li>
+        </ul>
+      </section>
+
+      <footer>mcp-flowise · see <a href="https://github.com/suamkf08/mcp-flowise" target="_blank" rel="noopener">github.com/suamkf08/mcp-flowise</a> for source and issues</footer>
+    </div>
+  </body>
+</html>
