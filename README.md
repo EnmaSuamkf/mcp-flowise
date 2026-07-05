@@ -9,7 +9,8 @@ MCP server that exposes the **chatflows of your local Flowise** as tools for Cla
 
 **Simple mode (default):**
 - `list_chatflows()` — lists available chatflows (`id` + `name`).
-- `create_prediction(chatflow_id, question)` — runs a chatflow and returns its response.
+- `create_prediction(chatflow_id, question)` — runs a Chat/Form-trigger chatflow and returns its response.
+- `trigger_webhook(chatflow_id, payload)` — runs a Webhook-trigger chatflow via `POST /api/v1/webhook/{id}`.
 
 **Dynamic mode (`FLOWISE_DYNAMIC=true`):**
 - Registers one tool per chatflow at startup, e.g. `flowise_support_bot(question)`.

@@ -3,7 +3,8 @@
 Talks to Flowise over its REST API and exposes, by default (simple mode):
 
     * list_chatflows()                          discover deployed chatflows
-    * create_prediction(chatflow_id, question)  run any chatflow
+    * create_prediction(chatflow_id, question)  run a Chat/Form-trigger chatflow
+    * trigger_webhook(chatflow_id, payload)      run a Webhook-trigger chatflow
 
 If FLOWISE_DYNAMIC=true, instead/also registers one tool per chatflow at
 startup (e.g. ``flowise_support_bot(question)``).
@@ -95,6 +96,16 @@ def _predict(chatflow_id: str, question: str) -> str:
             return resp.text
 
 
+def _trigger_webhook(chatflow_id: str, payload: dict[str, Any]) -> str:
+    with _client() as client:
+        resp = client.post(f"/api/v1/webhook/{chatflow_id}", json=payload)
+        resp.raise_for_status()
+        try:
+            return json.dumps(resp.json(), ensure_ascii=False)
+        except ValueError:
+            return resp.text
+
+
 @mcp.tool()
 def list_chatflows() -> str:
     """List the Flowise chatflows available on the configured instance.
@@ -124,6 +135,25 @@ def create_prediction(chatflow_id: str, question: str) -> str:
         return _predict(chatflow_id, question)
     except httpx.HTTPError as exc:
         return f"Error calling chatflow {chatflow_id}: {exc}"
+
+
+@mcp.tool()
+def trigger_webhook(chatflow_id: str, payload: dict[str, Any] | None = None) -> str:
+    """Invoke a Flowise chatflow whose Start node is configured as a Webhook Trigger.
+
+    Webhook-trigger flows reject the /prediction API (use create_prediction for
+    Chat/Form-trigger flows instead) and only respond to POST /api/v1/webhook/{id}.
+    Flowise exposes the payload inside the flow as $webhook.body.*, so check the
+    flow's Start node in the Flowise editor to know which fields it expects.
+
+    Args:
+        chatflow_id: Id of the chatflow to trigger (see ``list_chatflows``).
+        payload: Arbitrary JSON object sent as the webhook body. Defaults to {}.
+    """
+    try:
+        return _trigger_webhook(chatflow_id, payload or {})
+    except httpx.HTTPError as exc:
+        return f"Error triggering webhook {chatflow_id}: {exc}"
 
 
 def _normalize(name: str) -> str:
