@@ -257,11 +257,17 @@
         <h2>Installation</h2>
 
         <h3>One-command install (any client)</h3>
-        <pre><code>npx -y @suamkf08/mcp-flowise-install --client claude
-npx -y @suamkf08/mcp-flowise-install --client cursor
-npx -y @suamkf08/mcp-flowise-install --client free-code
-npx -y @suamkf08/mcp-flowise-install --client vscode
-npx -y @suamkf08/mcp-flowise-install --client windsurf</code></pre>
+        <pre><code>npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client claude
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client cursor
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client free-code
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client vscode
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client windsurf</code></pre>
+        <p>
+          <code>-p @suamkf08/mcp-flowise</code> pulls the published package, which ships the
+          <code>mcp-flowise-install</code> binary; <code>npx</code> then runs that binary. There is no
+          separate <code>@suamkf08/mcp-flowise-install</code> package on npm — the installer lives
+          inside <code>@suamkf08/mcp-flowise</code>.
+        </p>
         <p>
           The script prompts for <code>FLOWISE_API_ENDPOINT</code> (defaults to
           <code>http://localhost:3000</code> if you just press enter) and <code>FLOWISE_API_KEY</code>

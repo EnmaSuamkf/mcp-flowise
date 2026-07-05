@@ -26,12 +26,17 @@ MCP server that exposes the **chatflows of your local Flowise** as tools for Cla
 ### One-command install (any client)
 
 ```bash
-npx -y @suamkf08/mcp-flowise-install --client claude
-npx -y @suamkf08/mcp-flowise-install --client cursor
-npx -y @suamkf08/mcp-flowise-install --client free-code
-npx -y @suamkf08/mcp-flowise-install --client vscode
-npx -y @suamkf08/mcp-flowise-install --client windsurf
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client claude
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client cursor
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client free-code
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client vscode
+npx -y -p @suamkf08/mcp-flowise mcp-flowise-install --client windsurf
 ```
+
+`-p @suamkf08/mcp-flowise` pulls the published package that ships the
+`mcp-flowise-install` binary; `npx` then runs that binary. (There is no separate
+`@suamkf08/mcp-flowise-install` package on npm — the installer lives inside
+`@suamkf08/mcp-flowise`.)
 
 The script asks for your `FLOWISE_API_ENDPOINT` and `FLOWISE_API_KEY`, writes the config automatically, and tells you where it was saved. Restart your client after running it.
 

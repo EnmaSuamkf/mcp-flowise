@@ -1,6 +1,6 @@
 {
   "name": "@suamkf08/mcp-flowise",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "MCP server that exposes your local Flowise chatflows as tools for Claude, Cursor, and any MCP client",
   "main": "index.js",
   "bin": {
